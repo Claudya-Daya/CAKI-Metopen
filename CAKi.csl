@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="utf-8"?>
+<style xmlns="http://purl.org/net/xbiblio/csl" class="in-text" version="1.0" default-locale="id-ID" demote-non-dropping-particle="never" page-range-format="expanded">
+  <info>
+    <title>CAKi</title>
+    <title-short>CAKi</title-short>
+    <id>http://www.zotero.org/styles/caki</id>
+    <link href="http://www.zotero.org/styles/caki" rel="self"/>
+    <author>
+      <name>CAKi</name>
+    </author>
+    <category citation-format="author-date"/>
+    <category field="generic-base"/>
+    <summary>Gaya author-date berbasis APA. Sitasi: 1-8 penulis ditampilkan semua, 9+ penulis = nama pertama + dkk. Daftar pustaka: semua penulis ditampilkan. "et al." diganti "dkk." dan "and" diganti "dan".</summary>
+    <updated>2026-10-29T00:00:00+08:00</updated>
+  </info>
+
+  <!-- Istilah: et al. -> dkk., and -> dan (berlaku untuk semua bahasa dokumen) -->
+  <locale>
+    <terms>
+      <term name="et-al">dkk.</term>
+      <term name="and">dan</term>
+      <term name="no date" form="short">t.t.</term>
+      <term name="editor" form="short">
+        <single>Ed.</single>
+        <multiple>Eds.</multiple>
+      </term>
+      <term name="in">dalam</term>
+    </terms>
+  </locale>
+
+  <!-- ===== MACROS ===== -->
+
+  <!-- Penulis di daftar pustaka: SEMUA nama ditampilkan (tanpa et-al) -->
+  <macro name="author-bib">
+    <names variable="author">
+      <name name-as-sort-order="all" and="text" sort-separator=", " initialize-with=". " delimiter=", " delimiter-precedes-last="always"/>
+      <substitute>
+        <names variable="editor"/>
+        <text variable="title"/>
+      </substitute>
+    </names>
+  </macro>
+
+  <!-- Penulis di sitasi (teks) -->
+  <macro name="author-cite">
+    <names variable="author">
+      <name form="short" and="text" delimiter=", " delimiter-precedes-last="contextual"/>
+      <substitute>
+        <names variable="editor"/>
+        <text variable="title" form="short" quotes="false"/>
+      </substitute>
+    </names>
+  </macro>
+
+  <macro name="year">
+    <choose>
+      <if variable="issued">
+        <date variable="issued">
+          <date-part name="year"/>
+        </date>
+        <text variable="year-suffix"/>
+      </if>
+      <else>
+        <text term="no date" form="short"/>
+        <text variable="year-suffix" prefix="-"/>
+      </else>
+    </choose>
+  </macro>
+
+  <macro name="title">
+    <choose>
+      <if type="book thesis report" match="any">
+        <text variable="title" font-style="italic"/>
+      </if>
+      <else>
+        <text variable="title"/>
+      </else>
+    </choose>
+  </macro>
+
+  <macro name="edition">
+    <choose>
+      <if is-numeric="edition">
+        <group delimiter=" ">
+          <number variable="edition" form="ordinal"/>
+          <text term="edition" form="short"/>
+        </group>
+      </if>
+      <else>
+        <text variable="edition"/>
+      </else>
+    </choose>
+  </macro>
+
+  <macro name="editor-chapter">
+    <names variable="editor">
+      <name and="text" initialize-with=". " delimiter=", " delimiter-precedes-last="always"/>
+      <label form="short" prefix=" (" suffix=")"/>
+    </names>
+  </macro>
+
+  <macro name="container-journal">
+    <group delimiter=", ">
+      <text variable="container-title" font-style="italic"/>
+      <group delimiter="">
+        <text variable="volume" font-style="italic"/>
+        <text variable="issue" prefix="(" suffix=")"/>
+      </group>
+      <text variable="page"/>
+    </group>
+  </macro>
+
+  <macro name="publisher">
+    <text variable="publisher"/>
+  </macro>
+
+  <macro name="access">
+    <choose>
+      <if variable="DOI">
+        <text variable="DOI" prefix="https://doi.org/"/>
+      </if>
+      <else-if variable="URL">
+        <text variable="URL"/>
+      </else-if>
+    </choose>
+  </macro>
+
+  <!-- ===== SITASI ===== -->
+  <!-- 1-8 penulis: semua nama; 9+ penulis: nama pertama + dkk. -->
+  <citation et-al-min="9" et-al-use-first="1" disambiguate-add-year-suffix="true" disambiguate-add-names="false" collapse="year">
+    <sort>
+      <key macro="author-cite"/>
+      <key macro="year"/>
+    </sort>
+    <layout prefix="(" suffix=")" delimiter="; ">
+      <group delimiter=", ">
+        <text macro="author-cite"/>
+        <text macro="year"/>
+        <group>
+          <label variable="locator" form="short" suffix=" "/>
+          <text variable="locator"/>
+        </group>
+      </group>
+    </layout>
+  </citation>
+
+  <!-- ===== DAFTAR PUSTAKA ===== -->
+  <!-- Tanpa atribut et-al => semua penulis ditampilkan -->
+  <bibliography hanging-indent="true" entry-spacing="0" line-spacing="1">
+    <sort>
+      <key macro="author-bib"/>
+      <key macro="year"/>
+    </sort>
+    <layout suffix="">
+      <group delimiter=" ">
+        <group delimiter=" " suffix=".">
+          <text macro="author-bib"/>
+        </group>
+        <group prefix="(" suffix=")." >
+          <text macro="year"/>
+        </group>
+        <choose>
+          <if type="article-journal article-magazine article-newspaper" match="any">
+            <group delimiter=" ">
+              <text macro="title" suffix="."/>
+              <text macro="container-journal" suffix="."/>
+            </group>
+          </if>
+          <else-if type="book" match="any">
+            <group delimiter=" ">
+              <group delimiter=" ">
+                <text macro="title"/>
+                <text macro="edition" prefix="(" suffix=")"/>
+              </group>
+              <text macro="publisher" prefix=". "/>
+              <text value="." />
+            </group>
+          </else-if>
+          <else-if type="chapter paper-conference" match="any">
+            <group delimiter=" ">
+              <text macro="title" suffix="."/>
+              <group delimiter=" ">
+                <text term="in" text-case="capitalize-first"/>
+                <text macro="editor-chapter"/>
+                <text variable="container-title" font-style="italic"/>
+                <text variable="page" prefix="(hlm. " suffix=")"/>
+              </group>
+              <text value="."/>
+              <text macro="publisher" suffix="."/>
+            </group>
+          </else-if>
+          <else-if type="thesis report" match="any">
+            <group delimiter=" ">
+              <text macro="title"/>
+              <text variable="genre" prefix="[" suffix="]"/>
+              <text macro="publisher" prefix=". "/>
+              <text value="."/>
+            </group>
+          </else-if>
+          <else>
+            <group delimiter=" ">
+              <text macro="title" suffix="."/>
+              <text variable="container-title" font-style="italic" suffix="."/>
+              <text macro="publisher" suffix="."/>
+            </group>
+          </else>
+        </choose>
+        <text macro="access"/>
+      </group>
+    </layout>
+  </bibliography>
+</style>
